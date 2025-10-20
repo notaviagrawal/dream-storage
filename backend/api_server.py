@@ -96,12 +96,18 @@ class ViserServerManager:
 
     def _add_gs(self, splat: SplatFile):
         """Add gaussian splats to the scene"""
+        # Convert to float32 to avoid BFloat16 errors
+        centers = np.asarray(splat.centers, dtype=np.float32)
+        rgbs = np.asarray(splat.rgbs, dtype=np.float32)
+        opacities = np.asarray(splat.opacities, dtype=np.float32)
+        covariances = np.asarray(splat.covariances, dtype=np.float32)
+
         self.scene_gs_handle = self.server.scene.add_gaussian_splats(
             "/scene_gs",
-            centers=splat.centers,
-            rgbs=splat.rgbs,
-            opacities=splat.opacities,
-            covariances=splat.covariances,
+            centers=centers,
+            rgbs=rgbs,
+            opacities=opacities,
+            covariances=covariances,
         )
 
     def _set_bg(self, splat: SplatFile):

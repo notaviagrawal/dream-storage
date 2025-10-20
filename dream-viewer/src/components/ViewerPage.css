@@ -1,0 +1,157 @@
+.viewer-page {
+  height: 100vh;
+  width: 100vw;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+}
+
+.viewer-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.viewer-canvas {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.loading-overlay,
+.error-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 5;
+}
+
+.loading-spinner {
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid rgba(138, 43, 226, 0.8);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: white;
+  font-size: 1.5rem;
+  text-transform: lowercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.loading-subtext {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.error-overlay {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.error-content {
+  padding: 40px;
+  border-radius: 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.error-content svg {
+  color: #ff6b6b;
+}
+
+.error-content h3 {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+}
+
+.error-content p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.retry-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 50px;
+  background: rgba(138, 43, 226, 0.3);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: rgba(138, 43, 226, 0.5);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .back-btn {
+    top: 15px;
+    left: 15px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .viewer-canvas {
+    border-radius: 15px;
+  }
+}
