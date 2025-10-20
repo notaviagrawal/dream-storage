@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldGen - 3D World Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .input-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .generate-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            align-self: flex-end;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .generate-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .viewer-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+
+        .placeholder svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .placeholder h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .placeholder p {
+            font-size: 1rem;
+        }
+
+        .viewer-iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+            display: none;
+        }
+
+        .viewer-iframe.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .loading p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.offline {
+            background: #e74c3c;
+        }
+
+        .status-indicator.online {
+            background: #2ecc71;
+        }
+
+        .status-bar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>WorldGen</h1>
+            <p>Generate 3D worlds from text prompts</p>
+        </div>
+
+        <div class="status-bar">
+            <span class="status-indicator offline" id="statusIndicator"></span>
+            <span id="statusText">Connecting to API...</span>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label for="promptInput">Enter your prompt</label>
+                    <textarea
+                        id="promptInput"
+                        placeholder="e.g., A cozy living room with a fireplace, wooden furniture, and warm lighting"
+                    ></textarea>
+                </div>
+            </div>
+            <button class="generate-btn" id="generateBtn">Generate World</button>
+            <div class="error" id="errorMessage"></div>
+        </div>
+
+        <div class="viewer-section" id="viewerSection">
+            <div class="placeholder" id="placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+                <h3>No world generated yet</h3>
+                <p>Enter a prompt above and click "Generate World" to begin</p>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <h3>Generating your world...</h3>
+                <p>This may take 30-90 seconds depending on your GPU</p>
+            </div>
+
+            <iframe
+                id="viewerIframe"
+                class="viewer-iframe"
+                src=""
+            ></iframe>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8888';
+        const promptInput = document.getElementById('promptInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const placeholder = document.getElementById('placeholder');
+        const loading = document.getElementById('loading');
+        const viewerIframe = document.getElementById('viewerIframe');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+
+        // Check API health on load
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                statusIndicator.classList.remove('offline');
+                statusIndicator.classList.add('online');
+                statusText.textContent = `API Connected (${data.device})`;
+            } catch (error) {
+                statusIndicator.classList.remove('online');
+                statusIndicator.classList.add('offline');
+                statusText.textContent = 'API Offline - Please start api_server.py';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+            setTimeout(() => {
+                errorMessage.classList.remove('active');
+            }, 5000);
+        }
+
+        // Generate world
+        async function generateWorld() {
+            const prompt = promptInput.value.trim();
+
+            if (!prompt) {
+                showError('Please enter a prompt');
+                return;
+            }
+
+            // Update UI to loading state
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            placeholder.style.display = 'none';
+            loading.classList.add('active');
+            viewerIframe.classList.remove('active');
+
+            try {
+                const response = await fetch(`${API_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Generation failed');
+                }
+
+                const data = await response.json();
+
+                // Show the viewer
+                loading.classList.remove('active');
+                viewerIframe.src = data.viewer_url;
+                viewerIframe.classList.add('active');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to generate world. Make sure the API server is running.');
+                loading.classList.remove('active');
+                placeholder.style.display = 'block';
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate World';
+            }
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', generateWorld);
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                generateWorld();
+            }
+        });
+
+        // Check health on load and periodically
+        checkHealth();
+        setInterval(checkHealth, 5000);
+    </script>
+</body>
+</html>
