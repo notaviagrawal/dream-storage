@@ -1,4 +1,4 @@
-# Dream Storage - Visualize Your Dreams in 3D
+# Dream Viewer - Visualize Your Dreams in 3D
 
 Ever wake up from a vivid dream and wish you could step back inside? Dream Storage turns your dream descriptions into explorable 3D worlds. Simply record what you dreamed about each morning, and watch as AI transforms your memories into immersive 3D environments you can revisit anytime.
 
